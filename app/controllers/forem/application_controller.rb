@@ -2,17 +2,6 @@ require 'cancan'
 
 class Forem::ApplicationController < ::ApplicationController
   layout Forem.layout
-
-  # before_filters from Electorate.me
-  # from application_controller
-  before_filter :current_mode_reset
-  before_filter :store_location
-  before_filter :current_company
-  before_filter :set_time_zone
-  # from movements_controller
-  before_filter :current_user
-  before_filter :movement_object
-  before_filter :movement_join_object
   
   rescue_from CanCan::AccessDenied do
     redirect_to root_path, :alert => t("forem.access_denied")
