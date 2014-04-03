@@ -1,7 +1,18 @@
 require 'cancan'
 
-class Forem::ApplicationController < ApplicationController
+class Forem::ApplicationController < ::ApplicationController
   layout Forem.layout
+
+  # before_filters from Electorate.me
+  # from application_controller
+  before_filter :current_mode_reset
+  before_filter :store_location
+  before_filter :current_company
+  before_filter :set_time_zone
+  # from movements_controller
+  before_filter :current_user
+  before_filter :movement_object
+  before_filter :movement_join_object
   
   rescue_from CanCan::AccessDenied do
     redirect_to root_path, :alert => t("forem.access_denied")
@@ -23,6 +34,13 @@ class Forem::ApplicationController < ApplicationController
   end
   helper_method :pagination_param
 
+  def forem_sign_in_path
+    Forem.sign_in_path ||
+    (main_app.respond_to?(devise_route) && main_app.send(devise_route)) ||
+    (main_app.respond_to?(:sign_in_path) && main_app.send(:sign_in_path))
+  end
+  helper_method :forem_sign_in_path
+
   private
 
   def authenticate_forem_user
@@ -30,9 +48,7 @@ class Forem::ApplicationController < ApplicationController
       session["user_return_to"] = request.fullpath
       flash.alert = t("forem.errors.not_signed_in")
       devise_route = "new_#{Forem.user_class.to_s.underscore}_session_path"
-      sign_in_path = Forem.sign_in_path ||
-        (main_app.respond_to?(devise_route) && main_app.send(devise_route)) ||
-        (main_app.respond_to?(:sign_in_path) && main_app.send(:sign_in_path))
+      sign_in_path = forem_sign_in_path
       if sign_in_path
         redirect_to sign_in_path
       else
