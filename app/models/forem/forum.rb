@@ -8,6 +8,7 @@ module Forem
     friendly_id :name, :use => :slugged
 
     belongs_to :category
+    belongs_to :movement, class_name: "Movement"
 
     has_many :topics,     :dependent => :destroy
     has_many :posts,      :through => :topics, :dependent => :destroy
