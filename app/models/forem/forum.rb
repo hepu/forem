@@ -24,6 +24,11 @@ module Forem
     # Fix for #339
     default_scope order('name ASC')
 
+    # Scopes for Electorate.me's categories
+    scope :by_communities,    ->(communities_category_id){where(category_id: communities_category_id)}
+    scope :by_leaders,        ->(leaders_category_id){where(category_id: leaders_category_id)}
+    scope :by_general,        ->(general_category_id){where(category_id: general_category_id)}
+
     def last_post_for(forem_user)
       if forem_user && (forem_user.forem_admin? || moderator?(forem_user))
         posts.last
