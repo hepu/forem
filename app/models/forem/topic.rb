@@ -38,7 +38,7 @@ module Forem
 
     before_save  :set_first_post_user
     after_create :subscribe_poster
-    after_create :skip_pending_review
+    #after_create :skip_pending_review
 
     class << self
       def visible
