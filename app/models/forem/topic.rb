@@ -37,9 +37,8 @@ module Forem
     validates :user, :presence => true
 
     before_save  :set_first_post_user
-    before_save  :set_topic_as_approved
     after_create :subscribe_poster
-    after_create :skip_pending_review, :unless => :moderated?
+    after_create :skip_pending_review#, :unless => :moderated?
 
     class << self
       def visible
@@ -159,10 +158,6 @@ module Forem
 
     def moderated?
       user.forem_moderate_posts?
-    end
-
-    def set_topic_as_approved
-      approve!
     end
   end
 end
