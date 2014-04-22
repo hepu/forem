@@ -1,249 +1,85 @@
-![Forem - using Bootstrap](https://github.com/radar/forem/raw/master/doc/theme.png)
+# Forem for Electorate.me
 
-*Forem, using the forem-bootstrap theme*
+This is a fork of the [Forem](https://github.com/radar/forem) gem, used in the implementation of forums in [Electorate.me](https://github.com/electorateme/electorate2-0)
 
-# Forem [![Build status](https://api.travis-ci.org/radar/forem.png)](https://travis-ci.org/radar/forem)
-*"NO U!"*
+# Getting Started
 
-Forem is an engine for Rails that aims to be the best little forum system ever.
-The end goal is to have an engine that can be dropped into an application that
-provides the basic functionality of forums, topics and posts.
+Inside **Electorate.me**, **Forem** uses **Redis** to save the **Forem::Category** ID's used in the basic categories. Also, it saves the ID for the **Forem::Group** used for Moderators
 
-# Demo
+**Redis** is initialized in `config/initializers/redis.rb` as `$redis`, in the Electorate.me app.
 
-A demo application can be found at [http://forem.heroku.com](http://forem.heroku.com), and the source for this application can be found on the [forem.heroku.com
-repository](http://github.com/radar/forem.heroku.com)
+## Retrieve basic ID's used in Forem
 
-# Installation
-
-Installing Forem is easy.
-
-## Specify Gem dependencies
-
-If you're using Rails 3:
+To retrieve the basic ID's used in Forem, the following method is used:
 
 ```ruby
-gem 'forem', :github => "radar/forem"
+$redis.get('key_of_the_id_stored')
 ```
 
-For Rails 4, use the `rails4` branch:
+Currently, the keys stored are:
 
-```ruby
-gem 'forem', :github => "radar/forem", :branch => "rails4"
-```
+    communities_category_id
+    leaders_category_id
+    general_category_id
+    moderators_group_id
 
-For Rails 4, you will also need to manually specify these dependencies:
+For example, to retrieve the ID for the **Leaders** category, you use `$redis.get('leaders_category_id')`
 
-```ruby
-gem 'friendly_id', github: "FriendlyId/friendly_id"
-gem 'cancan', git: "https://github.com/nukturnal/cancan.git"
-```
+# Initializing Forem in the server
 
-For all Rails versions, one of `kaminari` or `will_paginate`
+Initializing forem is easy!
 
-```ruby
-gem 'kaminari', '0.15.0'
-# OR
-gem 'will_paginate', '3.0.5'
-```
+## Initialize
 
-## Run the installer
-
-**Ensure that you first of all have a `User` model and some sort of authentication system set up**. We would recommend going with [Devise](http://github.com/plataformatec/devise), but it's up to
-you. All Forem needs is a model to link topics and posts to.
-
-Run the installer and answer any questions that pop up. There's sensible defaults there if you don't want to answer them.
+First, initialize Forem's basics (categories and moderator's group):
 
 ```shell
-rails g forem:install
+bundle exec rake forums:initialize
 ```
 
-## Set up helper methods in your user model
+## Create Leaders forums
 
-Forem uses a `forem_name` (which defaults as `to_s`) method being available on your `User` model so that it can display the user's name in posts. Define it in your model like this:
+This command takes the **Leadership Positions** of every **Movement** and creates a forum for each one, inside 
 
-```ruby
-def forem_name
-  name
-end
+```shell
+bundle exec rake forums:create_leaders
 ```
 
-Please note that if you are using Devise, User model does not have `name` column by default,
-so you either should use custom migration to add it or use another column (`email` for example).
+## Create Communities forums
 
-It also uses an optional `forem_email` method for displaying avatars using [Gravatar](http://gravatar.com). It defaults to `email`. If you don't have an `email` attribute on the model, define a new method:
+This command creates the **Category** forums for each **Movement** according to its **Scope**
 
-```ruby
-def forem_email
-  email_address
-end
+```shell
+bundle exec rake forums:create_communities
 ```
 
-## Require basic Forem assets
 
-Add this line to your `application.js` file to load required JavaScript files:
+## Create Moderators forums
 
-```js
-//= require forem
+This command imports the **Leadership Users** which *state* is *Active* of each **Movement** and recognizes them as **Moderators** of the **Movement**'s forum
+
+```shell
+bundle exec rake forums:create_moderators
 ```
 
-Add this line to your `application.css` to apply required styling:
+## Clear all content
 
-```css
-*= require 'forem/base'
+This command destroys every **Forum**, **Category**, **Group** of the database
+
+```shell
+bundle exec rake forums:clear
 ```
 
-## Specify formatter to use
+##Setting a user as Superadmin ('Access Denied' message)
 
-If you want to provide users with an extended formatting capability, you should pick a [formatter](https://github.com/radar/forem/wiki/Formatters) to use. If you do not use a formatter users will not be able to insert newlines in their posts and do some other fancy stuff, however quoting will work fine.
+If you try to access the **Admin Area** and the message *Access Denied* pops up, it's necessary to set the user as *Superadmin*. 
 
-And you're done! Yaaay!
+To do this, access the **Rails Console** in the server and find the **User**, then set its attribute `forem_admin` to *true* and `save` the **User**.
 
-For more information on installing, please [see the "Installation" wiki
-page](https://github.com/radar/forem/wiki/Installing---Upgrading)
+# Methods applied to the User model
 
-## Features
+These are the basic **Forem**'s methods implemented in the **User** model:
 
-Here's a comprehensive list of the features currently in Forem:
-
-* Forums
-  * CRUD operations (provided by an admin backend)
-* Topics
-  * Viewing all topics for a forum
-  * Creating of new topics
-  * Editing topics
-  * Deleting own topics
-  * Locking topics
-  * Hiding topics
-  * Pinning topics
-* Posts
-  * Replying to topics
-  * Deleting own topics
-  * Blocking replies to locked topics
-  * Editing posts
-* Text Formatting
-  * Posts are HTML escaped and pre tagged by default.
-  * [Pluggable formatters for other behaviour (Markdown, Textile)](https://github.com/radar/forem/wiki/Formatters)
-  * :point_right: :tada: [:emoji:](http://www.emoji-cheat-sheet.com/) :tada: :point_left:
-* [Theme support](https://github.com/radar/forem/wiki/Theming)
-* [A flexible permissions system](https://github.com/radar/forem/wiki/Authorization-System)
-* [Translations](https://github.com/radar/forem/wiki/Translations)
-* [Flexible configuration](https://github.com/radar/forem/wiki/Configuration)
-* [Integration with
-  Refinery CMS](https://github.com/radar/forem/wiki/Integration-with-Refinery-CMS)
-
-If there's a feature you think would be great to add to Forem, let us know on [the Issues
-page](https://github.com/radar/forem/issues)
-
-## Auto Discovery Links
-If you would like to add auto discovery links for the built in forum Atom feeds, then add the following method inside your &lt;head&gt; tag:
-
-```erb
-<%= forem_atom_auto_discovery_link_tag %>
-```
-
-Forem's default layout includes this tag.
-
-## View Customisation
-
-If you want to customise Forem, you can copy over the views using the (Devise-inspired) `forem:views` generator:
-
-    rails g forem:views
-
-You will then be able to edit the forem views inside the `app/views/forem` of your application. These views will take precedence over those in the engine.
-
-## Extending Classes
-
-All of Forem’s business logic (models, controllers, helpers, etc) can easily be extended / overridden to meet your exact requirements using standard Ruby idioms.
-
-Standard practice for including such changes in your application or extension is to create a directory app/decorators. place file within the relevant app/decorators/models or app/decorators/controllers directory with the original class name with _decorator appended.
-
-### Adding a custom method to the Post model:
-
-```ruby
-# app/decorators/models/forem/post_decorator.rb
-
-Forem::Post.class_eval do
-  def some_method
-    ...
-  end
-end
-```
-
-### Adding a custom method to the PostsController:
-
-```ruby
-# app/decorators/controllers/forem/posts_controller_decorator.rb
-
-Forem::PostsController.class_eval do
-  def some_action
-    ...
-  end
-end
-```
-
-The exact same format can be used to redefine an existing method.
-
-## Translations
-
-We currently have support for the following languages:
-
-* Brazillian (pt-BR)
-* Bulgarian
-* Chinese (Simplified, zh-CN)
-* Chinese (Traditional, zh-TW)
-* Dutch
-* English
-* Farsi (Persian)
-* German
-* Italian
-* Polish
-* Portuguese (pt-PT)
-* Russian
-* Spanish
-* Lithuanian
-* Japanese
-* Vietnamese
-
-Patches for new translations are very much welcome!
-
-## OMG BUG! / OMG FEATURE REQUEST!
-
-File an issue and we'll get around to it when we can.
-
-## Developing on forem
-
-Forem is implemented as a Rails engine and its specs are run in the context of a dummy Rails app. The process for getting the specs to run is similar to setting up a regular rails app:
-
-    bundle exec rake forem:dummy_app
-
-Once this setup has been done, Forem's specs can be run by executing this command:
-
-    bundle exec rspec spec
-
-More information can be found in [this issue](https://github.com/radar/forem/issues/24) in the bugtracker.
-
-If all the tests are passing (they usually are), then you're good to go! Develop a new feature for Forem and be lavished with praise!
-
-## Contributors
-
-* Ryan Bigg
-* Philip Arndt
-* Josh Adams
-* Adam McDonald
-* Zak Strassburg
-* [And more](https://github.com/radar/forem/contributors)
-
-## Places using Forem
-
-* [Bias Project](http://biasproject.org)
-* [Alabama Intel](http://alabamaintel.com)
-* [Huntington's Disease Youth Organization](http://hdyo.org/)
-* [Miniand Tech](https://www.miniand.com/forums)
-* [Goodsmiths](https://www.goodsmiths.com/hub)
-* [Now Novel](http://nownovel.com/bookwriting)
-* [OrbsCCG](http://orbsccg.com/forums/)
-* [Airesis](http://www.airesis.eu)
-* [Lab Nation](https://www.lab-nation.com/forum/)
-
-If you want yours added here, just ask!
+    forem_name
+    forem_email
+    forem_moderator(movement)
