@@ -1,6 +1,6 @@
 require 'cancan'
 
-class Forem::ApplicationController < ::ApplicationController
+class Forem::ApplicationController < ApplicationController
   layout Forem.layout
   
   rescue_from CanCan::AccessDenied do
