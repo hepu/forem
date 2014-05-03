@@ -14,7 +14,6 @@ module Forem
     has_many :posts,      :through => :topics, :dependent => :destroy
     has_many :moderators, :through => :moderator_groups, :source => :group
     has_many :moderator_groups
-    has_one :leadership_position, class_name: 'LeadershipPosition'
 
     validates :category, :name, :description, :presence => true
 
