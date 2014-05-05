@@ -9,6 +9,7 @@ module Forem
 
     belongs_to :category
     belongs_to :movement, class_name: "Movement"
+    belongs_to :leadership_position, class_name: 'LeadershipPosition'
 
     has_many :topics,     :dependent => :destroy
     has_many :posts,      :through => :topics, :dependent => :destroy
