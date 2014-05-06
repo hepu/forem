@@ -8,8 +8,8 @@ module Forem
     friendly_id :name, :use => :slugged
 
     belongs_to :category
-    belongs_to :movement, class_name: "Movement"
     belongs_to :leadership_position, class_name: 'LeadershipPosition'
+    belongs_to :community, class_name: 'Community'
 
     has_many :topics,     :dependent => :destroy
     has_many :posts,      :through => :topics, :dependent => :destroy
@@ -18,17 +18,12 @@ module Forem
 
     validates :category, :name, :description, :presence => true
 
-    attr_accessible :category_id, :title, :name, :description, :moderator_ids, :leadership_position
+    attr_accessible :category_id, :title, :name, :description, :moderator_ids, :leadership_position, :community
 
     alias_attribute :title, :name
 
     # Fix for #339
     default_scope order('name ASC')
-
-    # Scopes for Electorate.me's categories
-    scope :by_communities,    ->(communities_category_id){where(category_id: communities_category_id)}
-    scope :by_leaders,        ->(leaders_category_id){where(category_id: leaders_category_id)}
-    scope :by_general,        ->(general_category_id){where(category_id: general_category_id)}
 
     def last_post_for(forem_user)
       if forem_user && (forem_user.forem_admin? || moderator?(forem_user))

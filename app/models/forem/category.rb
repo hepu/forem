@@ -6,6 +6,8 @@ module Forem
     friendly_id :name, :use => :slugged
 
     has_many :forums
+    belongs_to :movement, class_name: "Movement"
+
     validates :name, :presence => true
     attr_accessible :name
 
