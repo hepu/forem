@@ -29,7 +29,7 @@ module Forem
     belongs_to :forum
     belongs_to :forem_user, :class_name => Forem.user_class.to_s, :foreign_key => :user_id
     has_many   :subscriptions
-    has_many   :posts, :dependent => :destroy, :order => "forem_posts.created_at ASC", :source => :post
+    has_many   :posts, :dependent => :destroy, :order => "forem_posts.created_at ASC"
 
     accepts_nested_attributes_for :posts
 

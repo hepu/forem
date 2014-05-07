@@ -12,7 +12,7 @@ module Forem
     belongs_to :community, class_name: 'Community'
 
     has_many :topics,     :dependent => :destroy
-    has_many :posts,      :through => :topics, :dependent => :destroy
+    has_many :posts,      :through => :topics, :dependent => :destroy, :source => :posts
     has_many :moderators, :through => :moderator_groups, :source => :group
     has_many :moderator_groups
 
