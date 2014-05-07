@@ -1,5 +1,5 @@
 module Forem
-  class ForumsController < Forem::ApplicationController
+  class ForumsController < Forem::ForemApplicationController
     load_and_authorize_resource :class => 'Forem::Forum', :only => :show
     
     helper 'forem/topics'

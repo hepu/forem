@@ -1,5 +1,5 @@
 module Forem
-  class ModerationController < Forem::ApplicationController
+  class ModerationController < Forem::ForemApplicationController
     before_filter :ensure_moderator_or_admin
 
     helper 'forem/posts'

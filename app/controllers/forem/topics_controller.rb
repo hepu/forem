@@ -1,5 +1,5 @@
 module Forem
-  class TopicsController < Forem::ApplicationController
+  class TopicsController < Forem::ForemApplicationController
     helper 'forem/posts'
     before_filter :authenticate_forem_user, :except => [:show]
     before_filter :find_forum

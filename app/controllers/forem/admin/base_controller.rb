@@ -1,9 +1,10 @@
 module Forem
   module Admin
-    class BaseController < ApplicationController
+    class BaseController < ForemApplicationController
       layout Forem.layout
       
       before_filter :authenticate_forem_admin
+      before_filter :inside_admin_area
 
       def index
         # TODO: perhaps gather some stats here to show on the admin page?
@@ -17,6 +18,11 @@ module Forem
           redirect_to forums_path #TODO: not positive where to redirect here
         end
       end
+
+      def inside_admin_area
+        @inside_admin_area = true
+      end
+      
     end
   end
 end
