@@ -1,5 +1,5 @@
 module Forem
-  class Admin::UsersController < ApplicationController
+  class Admin::UsersController < ForemApplicationController
     def autocomplete
       users = Forem.user_class.forem_autocomplete(params[:term])
       users = users.map do |u|

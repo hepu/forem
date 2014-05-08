@@ -1,5 +1,5 @@
 module Forem
-  class PostsController < Forem::ForemApplicationController
+  class PostsController < ForemApplicationController
     before_filter :authenticate_forem_user
     before_filter :find_topic
     before_filter :reject_locked_topic!, :only => [:create]
