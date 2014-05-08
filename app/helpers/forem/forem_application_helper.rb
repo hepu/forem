@@ -1,5 +1,5 @@
 module Forem
-  module ApplicationHelper
+  module ForemApplicationHelper
     include FormattingHelper
     # processes text with installed markup formatter
     def forem_format(text, *options)
