@@ -8,8 +8,8 @@ module Forem
     friendly_id :name, :use => :slugged
 
     belongs_to :category
-    belongs_to :leadership_position, class_name: 'LeadershipPosition', dependent: :destroy
-    belongs_to :community, class_name: 'Community', dependent: :destroy
+    belongs_to :leadership_position, class_name: 'LeadershipPosition'
+    belongs_to :community, class_name: 'Community'
 
     has_many :topics,     :dependent => :destroy
     has_many :posts,      :through => :topics, :dependent => :destroy, :source => :posts
