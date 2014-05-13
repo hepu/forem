@@ -9,7 +9,7 @@ module Forem
     belongs_to :movement, class_name: "Movement"
 
     validates :name, :presence => true
-    attr_accessible :name
+    attr_accessible :name, :visible
 
     def to_s
       name
