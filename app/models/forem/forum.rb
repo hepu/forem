@@ -19,12 +19,16 @@ module Forem
     validates :category, :name, :description, :presence => true
 
     attr_accessible :category_id, :title, :name, :description, :moderator_ids, :leadership_position, :community,
-    :moderate_forem_topics, :moderate_forem_posts, :type, :visible
+    :moderate_forem_topics, :moderate_forem_posts, :type, :visible, :subtype
 
     alias_attribute :title, :name
 
     # Fix for #339
     default_scope order('name ASC')
+
+    # Constants
+    COMMUNITY_SUBTYPES = %w(us_house_district state_house_district state_senate_district)
+    LEADERS_SUBTYPES = %w(all_leaders)
 
     def last_post_for(forem_user)
       if forem_user && (forem_user.forem_admin? || moderator?(forem_user))
