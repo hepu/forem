@@ -26,6 +26,10 @@ module Forem
     # Fix for #339
     default_scope order('name ASC')
 
+    # Constants
+    COMMUNITY_SUBTYPES = %w(country us_house_district state state_house_district state_senate_district county city school_district)
+    LEADERS_SUBTYPES = %w(all_leaders)
+
     def last_post_for(forem_user)
       if forem_user && (forem_user.forem_admin? || moderator?(forem_user))
         posts.last
