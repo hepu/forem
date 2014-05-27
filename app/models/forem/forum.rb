@@ -19,7 +19,7 @@ module Forem
     validates :category, :name, :description, :presence => true
 
     attr_accessible :category_id, :title, :name, :description, :moderator_ids, :leadership_position, :community,
-    :moderate_forem_topics, :moderate_forem_posts, :type, :visible, :subtype
+    :moderate_forem_topics, :moderate_forem_posts, :type, :visible, :subtype, :district_code
 
     alias_attribute :title, :name
 
