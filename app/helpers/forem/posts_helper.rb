@@ -35,26 +35,5 @@ module Forem
         Forem.default_gravatar
       end
     end
-
-    def user_leadership_positions(user)
-      leadership_positions = ""
-      leadership_users_of_user = @movement.leadership_users.where(user_id: user.id).active
-      leadership_users_of_user.each do |lu|
-        lp = lu.leadership_position
-        jurisdiction = ""
-        complete_jurisdiction = lp.get_complete_jurisdiction(user)
-        if complete_jurisdiction
-          if complete_jurisdiction.is_a? Array
-            jurisdiction = " (#{complete_jurisdiction.join(',')})"
-          else
-            jurisdiction = " (#{complete_jurisdiction})"
-          end
-        end
-        leadership_positions += content_tag :li do |c|
-          content_tag :small, lp.name+jurisdiction, class: 'position-name'
-        end
-      end
-      leadership_positions.html_safe
-    end
   end
 end
