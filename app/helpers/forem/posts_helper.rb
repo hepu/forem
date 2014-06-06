@@ -41,7 +41,15 @@ module Forem
       leadership_users_of_user = @movement.leadership_users.where(user_id: user.id).active
       leadership_users_of_user.each do |lu|
         lp = lu.leadership_position
-        lp.jurisdiction.present? ? jurisdiction = " ("+lp.jurisdiction+")" : jurisdiction = ""
+        jurisdiction = ""
+        complete_jurisdiction = lp.get_complete_jurisdiction(user)
+        if complete_jurisdiction
+          if complete_jurisdiction.is_a? Array
+            jurisdiction = " (#{complete_jurisdiction.join(',')})"
+          else
+            jurisdiction = " (#{complete_jurisdiction})"
+          end
+        end
         leadership_positions += content_tag :li do |c|
           content_tag :small, lp.name+jurisdiction, class: 'position-name'
         end
